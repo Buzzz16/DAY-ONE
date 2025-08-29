@@ -20,7 +20,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check API key
     if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
       console.error("❌ API key not found!");
       return NextResponse.json(
@@ -30,75 +29,63 @@ export async function POST(req: NextRequest) {
     }
     console.log("✅ API key found");
 
-    // Get last user message
-    const lastUserMessage =
-      messages[messages.length - 1]?.content?.toString() || "";
+    const lastUserMessage = messages[messages.length - 1]?.content?.toString() || "";
     console.log("Processing message:", lastUserMessage);
 
-    // Use generateText
     const result = await generateText({
       model: google("gemini-2.5-flash"),
-      prompt: `## Core Task
-Your goal is to transform an input algebra problem into a comprehensive solution formatted in **Markdown** with all mathematical notation rendered using **LaTeX**.
+      prompt: `
+## Task
+Transform the input algebra problem into a **step-by-step solution** in Markdown, with all math formatted in LaTeX.
 
----
+### Output Rules
+1. Use these sections:
+   - ### 📝 Problem
+   - ### 💡 Step-by-Step Solution
+   - ### ✅ Final Answer
+2. Use LaTeX for all math:
+   - Inline: $...$
+   - Block: $$...$$
+3. Step-by-step solution must show:
+   - Equation
+   - Explanation of the step
+4. Final answer must be:
+   - Clear
+   - Bolded
+   - Enclosed in a Markdown blockquote
 
-## Output Requirements & Formatting Rules
-1.  **Structure:** The response **must** be organized into the following sections using Markdown headings:
-    * \`### 📝 Problem\`
-    * \`### 💡 Step-by-Step Solution\`
-    * \`### ✅ Final Answer\`
+### Example
+**Input:** Solve for x: 3(x - 2) + 5 = 14
 
-2.  **LaTeX is Mandatory:** **ALL** mathematical variables, numbers, equations, and expressions **must** be formatted using LaTeX.
-    * Use \`$ ... $\` for inline mathematical notation (e.g., \`the variable $x$\`).
-    * Use \`$$ ... $$\` for block-level equations that should be centered on their own line.
-
-3.  **Step-by-Step Explanation:**
-    * Under the \`### 💡 Step-by-Step Solution\` heading, break down the solution into logical, numbered steps.
-    * For each step, first show the mathematical transformation (the equation), and then on the next line, provide a concise, clear explanation of the action taken (e.g., "Combine like terms," "Apply the distributive property," "Isolate the variable $x$").
-
-4.  **Clarity and Highlighting:**
-    * The final answer under the \`### ✅ Final Answer\` section **must** be stated clearly and enclosed in a Markdown blockquote. The final equation or value should be **bolded**.
-
----
-
-## Example of Required Output
-
-**User Input:**
-\`Solve for x: 3(x - 2) + 5 = 14\`
-
-**Your Expected Output:**
-
+**Output:**
 ### 📝 Problem
-Solve the following equation for the variable $x$:
+Solve for $x$:
 $$ 3(x - 2) + 5 = 14 $$
 
 ### 💡 Step-by-Step Solution
-1.  $$ 3x - 6 + 5 = 14 $$
-    Apply the distributive property by multiplying $3$ by each term inside the parentheses.
+1. $$ 3x - 6 + 5 = 14 $$  
+   Apply distributive property.
 
-2.  $$ 3x - 1 = 14 $$
-    Combine the constant terms on the left side ($-6 + 5 = -1$).
+2. $$ 3x - 1 = 14 $$  
+   Combine constants.
 
-3.  $$ 3x = 14 + 1 $$
-    To isolate the term with $x$, add $1$ to both sides of the equation.
+3. $$ 3x = 15 $$  
+   Add 1 to both sides.
 
-4.  $$ 3x = 15 $$
-    Simplify the right side of the equation.
+4. $$ x = \\frac{15}{3} $$  
+   Divide both sides by 3.
 
-5.  $$ x = \\frac{15}{3} $$
-    Divide both sides by $3$ to solve for $x$.
-
-6.  $$ x = 5 $$
-    Perform the final division.
+5. $$ x = 5 $$  
+   Simplify.
 
 ### ✅ Final Answer
-> The solution to the equation is **$x = 5$**.
-      
+> **$x = 5$**
+
 ---
-      
-Now solve the following user problem:
-${lastUserMessage}`,
+
+Now solve this problem:
+${lastUserMessage}
+      `,
       maxTokens: 500,
     });
 
