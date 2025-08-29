@@ -2,7 +2,7 @@
 # `Counto - Cheerful Math Chat`
 
 **Description**  
-Counto adalah asisten matematika berbasis kecerdasan buatan yang dapat membantu teman-teman semua dalam belajar matematika. Tema SDGs yang kami pilih adalah “AI for Quality Education,” Counto fokus pada aljabar dengan menyediakan penjelasan langkah-langkah penyelesaian yang jelas, tips memahami konsep, dan jawaban interaktif atas setiap soal. Counto siap membantumu belajar lebih cerdas dan menguasai aljabar dengan lebih mudah.
+Counto adalah asisten matematika berbasis kecerdasan buatan yang dapat membantu teman-teman semua dalam belajar matematika. Tema SDGs yang kami pilih adalah “AI for Quality Education,” Counto fokus pada matematika dengan menyediakan penjelasan langkah-langkah penyelesaian yang jelas, tips memahami konsep, dan jawaban interaktif atas setiap soal. Counto siap membantumu belajar lebih cerdas dan menguasai matematika dengan lebih mudah.
 
 ## 🧑‍💻 Team
 
