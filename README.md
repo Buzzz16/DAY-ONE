@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# `Counto - Cheerful Math Chat`
 
-First, run the development server:
+**Description**  
+Counto adalah asisten matematika berbasis kecerdasan buatan yang dapat membantu teman-teman semua dalam belajar matematika. Tema SDGs yang kami pilih adalah “AI for Quality Education,” Counto fokus pada aljabar dengan menyediakan penjelasan langkah-langkah penyelesaian yang jelas, tips memahami konsep, dan jawaban interaktif atas setiap soal. Counto siap membantumu belajar lebih cerdas dan menguasai aljabar dengan lebih mudah.
 
+## 🧑‍💻 Team
+
+| **Name**                                  | **Role**                              |
+|-------------------------------------------|---------------------------------------|
+| Gusti Agung Raka Darma Putra Kepakisan    | Backend [Prompt System Engineer]      |
+| Geo Bayu Febriando Dunggio                | FrontEnd [UI/UX]                      |
+| Julian Sudiyanto                          | Backend [API Engineer]                |
+| Zulfa Almajid Basyaasyah                  | Frontend [Project Init and UI]        |
+
+---
+
+## 🚀 Features
+- **📝 Problem Display**: Menampilkan soal aljabar dengan format yang jelas menggunakan **LaTeX**, sehingga mudah dibaca dan dipahami.
+- **💡 Step-by-Step Solution**: Menyediakan solusi langkah demi langkah, termasuk persamaan dan penjelasan tiap langkah, agar pengguna memahami prosesnya.
+- **📐 LaTeX Formatting**: Mendukung penulisan matematika dengan LaTeX, baik inline ($...$) maupun blok ($$...$$).
+- **🔄 Interaktif dan Edukatif**: Setiap langkah disertai penjelasan sehingga belajar lebih efektif, bukan hanya sekadar melihat hasil.
+- **📄 Markdown Compatibility**: Output sepenuhnya dalam format Markdown, cocok untuk dokumentasi atau materi pembelajaran.
+
+## 🛠 Tech Stack
+
+**Frontend:**
+- Bahasa Pemrograman : TypeScript
+- Framework : Next.js dengan react
+- Styling : Tailwind.css
+
+**Backend:**
+- Bahasa Pemrograman : TypeScript
+- Framework : RestAPI
+- API : Google AI Gemini
+
+---
+
+## 🚀 How to Run the Project
+
+### Step 1. Clone the Repository
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/Buzzz16/DAY-ONE.git
+cd DAY-ONE
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Step 2. Run the File
+```bash
+npm install
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Step 3. Buka localhost:3000 di browser
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📋 Requirements (optional)
+- Node.js versi 18.18 atau lebih baru.
