@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     console.log("Processing message:", lastUserMessage);
 
     const result = await generateText({
-      model: google("gemini-2.5-flash"),
+  model: google("gemini-2.5-flash"),
       prompt: `
 ## Task
 Transform the input algebra problem into a **step-by-step solution** in Markdown, with all math formatted in LaTeX.
@@ -86,7 +86,7 @@ $$ 3(x - 2) + 5 = 14 $$
 Now solve this problem:
 ${lastUserMessage}
       `,
-      maxTokens: 500,
+      maxOutputTokens: 500,
     });
 
     console.log(
