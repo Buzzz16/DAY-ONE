@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Caunto ChatBot",
+  title: "Caunto Chatbot",
   description: "Your Math Companion",
 };
 
