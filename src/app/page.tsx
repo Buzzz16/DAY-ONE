@@ -6,33 +6,78 @@ import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 
 type Message = {
-  id: number;
-  role: "bot" | "user";
-  text: string;
+  id: string;
+  role: "assistant" | "user";
+  content: string;
 };
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: Date.now(),
-      role: "bot",
-      text: "Halo 👋 Aku Counto, asisten matematika. Ada soal?",
+      id: Date.now().toString(),
+      role: "assistant",
+      content: "Halo 👋 Aku Counto, asisten matematika. Ada soal?",
     },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const sendMessage = (e: React.FormEvent) => {
+  const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || loading) return;
 
-    const userMsg = { id: Date.now(), role: "user" as const, text: input };
+    const userMsg: Message = { 
+      id: Date.now().toString(), 
+      role: "user", 
+      content: input 
+    };
+    
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setLoading(true);
 
-    // UI-only, tidak ada response
-    setTimeout(() => setLoading(false), 500); // simulasi delay typing
+    try {
+      // Kirim ke API route
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          messages: [...messages, userMsg],
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("API Error:", errorText);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Handle simple JSON response (non-streaming for now)
+      const data = await response.json();
+      console.log("Response data:", data);
+
+      const botMsg: Message = {
+        id: Date.now().toString(),
+        role: "assistant",
+        content: data.response || "Maaf, tidak ada response.",
+      };
+
+      setMessages((prev) => [...prev, botMsg]);
+    } catch (error) {
+      console.error("Error sending message:", error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          role: "assistant",
+          content: "Maaf, terjadi error. Coba lagi ya! 😅",
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -63,14 +108,19 @@ export default function Home() {
                   remarkPlugins={[remarkMath]}
                   rehypePlugins={[rehypeKatex]}
                 >
-                  {m.text}
+                  {m.content}
                 </ReactMarkdown>
               </div>
             </div>
           ))}
           {loading && (
-            <div className="text-sm text-gray-500">
-              Counto sedang mengetik…
+            <div className="flex justify-start">
+              <div className="bg-gray-300 px-4 py-2 rounded-xl rounded-bl-sm">
+                <div className="text-sm text-gray-600">
+                  Counto sedang mengetik
+                  <span className="animate-pulse">...</span>
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -81,13 +131,15 @@ export default function Home() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Tulis soal matematika…"
-            className="flex-1 border px-3 py-2 rounded-lg text-black placeholder-blue-400"
+            disabled={loading}
+            className="flex-1 border px-3 py-2 rounded-lg text-black placeholder-gray-400 disabled:bg-gray-100"
           />
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+            disabled={loading || !input.trim()}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Kirim
+            {loading ? "..." : "Kirim"}
           </button>
         </form>
       </div>
