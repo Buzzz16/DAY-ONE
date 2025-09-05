@@ -1,16 +1,21 @@
 import { google } from "@ai-sdk/google";
 import { generateText } from "ai";
 import { NextRequest, NextResponse } from "next/server";
+import { mathEvaluator } from "../../../lib/tools";
 
-export const maxDuration = 30;
+export const maxDuration = 60;
+
+// 🔎 fungsi deteksi ekspresi matematika
+function looksLikeMath(input: string): boolean {
+  // boleh ada teks tapi harus mengandung angka + operator
+  return /[0-9]+.*[+\-*/^=].*/.test(input);
+}
 
 export async function POST(req: NextRequest) {
   try {
     console.log("=== API ROUTE CALLED ===");
 
     const body = await req.json();
-    console.log("Request body:", body);
-
     const { messages } = body;
 
     if (!messages || !Array.isArray(messages)) {
@@ -20,83 +25,44 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-      console.error("❌ API key not found!");
-      return NextResponse.json(
-        { error: "API key not configured" },
-        { status: 500 }
-      );
-    }
-    console.log("✅ API key found");
-
-    const lastUserMessage = messages[messages.length - 1]?.content?.toString() || "";
+    const lastUserMessage =
+      messages[messages.length - 1]?.content?.toString() || "";
     console.log("Processing message:", lastUserMessage);
 
-    const result = await generateText({
-  model: google("gemini-2.5-flash"),
-      prompt: `
-## Task
-Transform the input algebra problem into a **step-by-step solution** in Markdown, with all math formatted in LaTeX.
+    let responseText: string;
 
-### Output Rules
-1. Use these sections:
-   - ### 📝 Problem
-   - ### 💡 Step-by-Step Solution
-   - ### ✅ Final Answer
-2. Use LaTeX for all math:
-   - Inline: $...$
-   - Block: $$...$$
-3. Step-by-step solution must show:
-   - Equation
-   - Explanation of the step
-4. Final answer must be:
-   - Clear
-   - Bolded
-   - Enclosed in a Markdown blockquote
+    if (looksLikeMath(lastUserMessage)) {
+      // coba math evaluator
+      console.log("Panggil MathEvaluator dengan input:", lastUserMessage);
 
-### Example
-**Input:** Solve for x: 3(x - 2) + 5 = 14
+      const match = lastUserMessage.match(/[\d+\-*/^().=x\s]+/);
+      const cleanedInput = match ? match[0].trim() : lastUserMessage;
 
-**Output:**
-### 📝 Problem
-Solve for $x$:
-$$ 3(x - 2) + 5 = 14 $$
+      const mathResult = await mathEvaluator(cleanedInput);
 
-### 💡 Step-by-Step Solution
-1. $$ 3x - 6 + 5 = 14 $$  
-   Apply distributive property.
+      if (mathResult.success) {
+        responseText = `### 📝 Problem\n${lastUserMessage}\n\n### ✅ Final Answer\n> **${mathResult.result}**`;
+      } else {
+        // fallback ke AI kalau math gagal parse
+        const aiResult = await generateText({
+          model: google("gemini-2.5-flash"),
+          prompt: lastUserMessage,
+        });
+        responseText = aiResult.text;
+      }
+    } else {
+      // langsung AI untuk input non-math
+      const aiResult = await generateText({
+        model: google("gemini-2.5-flash"),
+        prompt: lastUserMessage,
+      });
+      responseText = aiResult.text;
+    }
 
-2. $$ 3x - 1 = 14 $$  
-   Combine constants.
-
-3. $$ 3x = 15 $$  
-   Add 1 to both sides.
-
-4. $$ x = \\frac{15}{3} $$  
-   Divide both sides by 3.
-
-5. $$ x = 5 $$  
-   Simplify.
-
-### ✅ Final Answer
-> **$x = 5$**
-
----
-
-Now solve this problem:
-${lastUserMessage}
-      `,
-      maxOutputTokens: 500,
-    });
-
-    console.log(
-      "✅ Response generated:",
-      result.text ? result.text.substring(0, 100) + "..." : "No text"
-    );
+    console.log("✅ Response generated:", responseText.slice(0, 80) + "...");
 
     return NextResponse.json({
-      response: result.text,
-      usage: result.usage,
+      response: responseText,
     });
   } catch (error) {
     console.error("💥 API ERROR:", error);
