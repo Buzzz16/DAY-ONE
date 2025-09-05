@@ -155,3 +155,13 @@ body {
   animation: softPulse 1.8s infinite;
   border-radius: 22px;
 }
+.perspective {
+  perspective: 1000px;
+}
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
