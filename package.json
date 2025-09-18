@@ -11,7 +11,9 @@
   "dependencies": {
     "@ai-sdk/google": "^2.0.11",
     "ai": "^5.0.27",
+    "framer-motion": "^12.23.14",
     "katex": "^0.16.22",
+    "lucide-react": "^0.544.0",
     "mathjs": "^14.7.0",
     "next": "15.5.0",
     "react": "^19.1.0",
